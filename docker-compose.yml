@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  rails: &rails
+    build:
+      context: .
+      dockerfile: containers/rails/Dockerfile
+    environment:
+      IN_DOCKER: 1
+      RAILS_ENV: development
+      TZ: Asia/Tokyo
+      DATABASE_URL: mysql2://root:password@mysql:3306
+      REDIS_URL:  redis://redis:6379
+      MEMCACHE_SERVERS: memcache:11211
+    volumes:
+      - ./:/app
+      - bundle_vol:/usr/local/bundle:rw
+      - /usr/local/bundle/bin/
+    ports:
+      - '3000:3000'
+    tty: true
+    stdin_open: true
+    links:
+      - mysql
+      - redis
+
+  mysql:
+    build:
+      context: .
+      dockerfile: containers/mysql/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker/mysql/tmp/:/etc/mysql/conf.d
+      - mysql_vol:/var/lib/mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+
+  redis:
+    image: redis:3.2.4-alpine
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - '6379:6379'
+
+volumes:
+  mysql_vol:
+    driver: local
+  bundle_vol:
+    driver: local
