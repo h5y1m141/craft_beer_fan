@@ -1,0 +1,10 @@
+.DS_Store
+*.swp
+db/*.sqlite3
+log/*
+tmp/*
+coverage/*
+config/database.yml
+vendor/bundle
+# Ignore master key for decrypting credentials and more.
+/config/master.key
