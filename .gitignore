@@ -1,5 +1,6 @@
 .DS_Store
 .env
+.env.test
 *.swp
 db/*.sqlite3
 log/*
